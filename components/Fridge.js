@@ -1,10 +1,15 @@
-import * as React from 'react';
-import { Text, View,SectionList, FlatList, StyleSheet,SafeAreaView, StatusBar } from 'react-native';
+import * as React from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 
 const styles = StyleSheet.create({
   container: {
-   flex: 1,
-   paddingTop: 22
+    flex: 1,
+    paddingTop: 22,
   },
   sectionHeader: {
     paddingTop: 2,
@@ -12,8 +17,8 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingBottom: 2,
     fontSize: 14,
-    fontWeight: 'bold',
-    backgroundColor: 'rgba(247,247,247,1.0)',
+    fontWeight: "bold",
+    backgroundColor: "rgba(247,247,247,1.0)",
   },
   item: {
     padding: 10,
@@ -21,27 +26,27 @@ const styles = StyleSheet.create({
     height: 60,
   },
   title: {
-    fontSize: 24
-  }
-})
+    fontSize: 24,
+  },
+});
 
 const DATA = [
   {
     title: "Main dishes",
-    data: ["Pizza", "Burger", "Risotto"]
+    data: ["Pizza", "Burger", "Risotto"],
   },
   {
     title: "Sides",
-    data: ["French Fries", "Onion Rings", "Fried Shrimps"]
+    data: ["French Fries", "Onion Rings", "Fried Shrimps"],
   },
   {
     title: "Drinks",
-    data: ["Water", "Coke", "Beer"]
+    data: ["Water", "Coke", "Beer"],
   },
   {
     title: "Desserts",
-    data: ["Cheese Cake", "Ice Cream"]
-  }
+    data: ["Cheese Cake", "Ice Cream"],
+  },
 ];
 
 const Item = ({ title }) => (
@@ -50,21 +55,14 @@ const Item = ({ title }) => (
   </View>
 );
 
-export const FridgeScreen = () => {
-
-      return (
-        <SafeAreaView style={styles.container}>
-        <SectionList
-          sections={DATA}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => <Item title={item} />}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.sectionHeader}>{title}</Text>
-          )}
-        />
-
-
-      </SafeAreaView>
-
+export const FridgeScreen = ({route}) => {
+  const { list } = route.params;
+  if(!!route.params.list){
+    console.log(list);
+  }
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text>Test</Text>
+    </SafeAreaView>
   );
-}
+};

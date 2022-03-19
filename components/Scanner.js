@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Button, AsyncStorageStatic} from 'react-native'
 import { useState, useEffect } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
-export const ScannerScreen = () => {
+export const ScannerScreen = ({ navigation }) => {
 
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -29,8 +29,8 @@ export const ScannerScreen = () => {
           {data}
         ]
       });
-      //alert(data);
       alert(JSON.stringify(list));
+      navigation.navigate('Fridge', {list: list});
       };
   
   if (hasPermission === null) {
