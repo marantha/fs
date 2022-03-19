@@ -1,16 +1,7 @@
 import * as React from 'react';
 import { Text, View, StyleSheet, Button, AsyncStorageStatic} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { EvilIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useState, useEffect } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import barcodeScannedItems from "./BarcodeScannedItems";
-import axios from "axios";
-import { v4 as uuidv4 } from 'uuid';
-
 
 export const ScannerScreen = () => {
 

@@ -1,14 +1,5 @@
 import * as React from 'react';
 import { Text, View,SectionList, FlatList, StyleSheet,SafeAreaView, StatusBar } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { EvilIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import axios from "axios";
-import { v4 as uuidv4 } from 'uuid';
-//import {DATA as DATA} from './data';
 
 const styles = StyleSheet.create({
   container: {
