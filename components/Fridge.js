@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  SafeAreaView,
-} from "react-native";
+import { Text, View, StyleSheet, SafeAreaView, FlatList } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
@@ -55,10 +50,14 @@ const Item = ({ title }) => (
   </View>
 );
 
-export const FridgeScreen = ({route}) => {
-  const { list } = route.params;
-  if(!!route.params.list){
-    console.log(list);
+export const FridgeScreen = ({ route }) => {
+  if (!!route.params && !!route.params.list) {
+    const { list } = route.params;
+    return (
+      <SafeAreaView style={styles.container}>
+        <FlatList data={list} renderItem={({ item }) => <Text>{item.data}</Text>} />
+      </SafeAreaView>
+    );
   }
   return (
     <SafeAreaView style={styles.container}>
