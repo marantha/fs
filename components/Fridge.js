@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
 
 export const FridgeScreen = ({ route }) => {
 
-  const selected = () => {
+  const selected = (title) => {
     Alert.alert(
       "Delete Item",
       "Are you sure you want to delete this item?",
@@ -51,7 +51,15 @@ export const FridgeScreen = ({ route }) => {
           },
           {
               text: "Yes", onPress: () => {
-                  console.log("pressed alert")
+                  const { list } = route.params;
+                  let newlist = [];
+                  for(let i=0; i<list.length; i++) {
+                    if(list[i].data !== title){
+                      newlist.push(list[i]);
+                    } else {
+                    }
+                    console.log(newlist);
+                  }
               }
           }
       ])
@@ -60,7 +68,9 @@ export const FridgeScreen = ({ route }) => {
 
   const Item = ({ title }) => (
     <View style={styles.item}>
-      <TouchableOpacity onPress={selected}>
+      <TouchableOpacity onPress={() => {
+        selected(title)
+        }}>
       <Text style={styles.title}>{title}</Text>
       </TouchableOpacity>
     </View>
