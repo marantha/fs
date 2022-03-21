@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Text, View, StyleSheet, SafeAreaView, FlatList } from "react-native";
+import { useState, useEffect } from 'react';
+import { Text, View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Button, Alert } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
@@ -19,49 +20,63 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 14,
     height: 60,
+    backgroundColor: "rgba(247,247,247,1.0)",
+    borderRadius: 10,
+    marginRight: 20,
+    marginLeft: 20,
+    marginTop: 10,
   },
   title: {
     fontSize: 24,
   },
+  buttonContainer: {
+    height: 50,
+    alignItems: 'flex-end',
+  },
+  button: {
+    fontSize: 24,
+  },
 });
 
-const DATA = [
-  {
-    title: "Main dishes",
-    data: ["Pizza", "Burger", "Risotto"],
-  },
-  {
-    title: "Sides",
-    data: ["French Fries", "Onion Rings", "Fried Shrimps"],
-  },
-  {
-    title: "Drinks",
-    data: ["Water", "Coke", "Beer"],
-  },
-  {
-    title: "Desserts",
-    data: ["Cheese Cake", "Ice Cream"],
-  },
-];
-
-const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
-
 export const FridgeScreen = ({ route }) => {
+
+  const selected = () => {
+    Alert.alert(
+      "Delete Item",
+      "Are you sure you want to delete this item?",
+      [
+          {
+              text: "Cancel",
+              style: "cancel"
+          },
+          {
+              text: "Yes", onPress: () => {
+                  console.log("pressed alert")
+              }
+          }
+      ])
+  };
+  
+
+  const Item = ({ title }) => (
+    <View style={styles.item}>
+      <TouchableOpacity onPress={selected}>
+      <Text style={styles.title}>{title}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   if (!!route.params && !!route.params.list) {
     const { list } = route.params;
     return (
       <SafeAreaView style={styles.container}>
-        <FlatList data={list} renderItem={({ item }) => <Text>{item.data}</Text>} />
+        <FlatList data={list} renderItem={({ item }) => <Item title = {item.data} />} />
       </SafeAreaView>
     );
   }
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Test</Text>
+      <Text style={styles.sectionHeader}>This is the contents of your Fridge:</Text>
     </SafeAreaView>
   );
 };
