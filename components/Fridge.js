@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
 
 export const FridgeScreen = ({ route }) => {
 
+  [newlist,setNewList] = useState([]);
   const selected = (title) => {
     Alert.alert(
       "Delete Item",
@@ -52,14 +53,21 @@ export const FridgeScreen = ({ route }) => {
           {
               text: "Yes", onPress: () => {
                   const { list } = route.params;
-                  let newlist = [];
-                  for(let i=0; i<list.length; i++) {
-                    if(list[i].data !== title){
-                      newlist.push(list[i]);
-                    } else {
+                  //console.log(title) This works
+                list.forEach(food =>{
+                  //console.log(food.data) this also works
+                    if(food.data !== title){
+                     setNewList(prev => {
+                      return [ 
+                        ...prev,
+                        food.data
+                      ]
+                    });
+                    }else{
+
                     }
-                    console.log(newlist);
-                  }
+                }) //ForEach loop end
+                console.log(newlist);
               }
           }
       ])
