@@ -1,6 +1,15 @@
 import * as React from "react";
-import { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Button, Alert } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  TouchableOpacity,
+  Button,
+  Alert,
+} from "react-native";
 
 const styles = StyleSheet.create({
   container: {
@@ -31,70 +40,77 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     height: 50,
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   button: {
     fontSize: 24,
   },
 });
 
-export const FridgeScreen = ({ route }) => {
+export const FridgeScreen = ({ route, navigation }) => {
+  const [newlist, setNewList] = useState([]);
+  const [added, setAdded] = useState(false);
+  const [routeparams, setRouteParams] = useState("");
 
-  [newlist,setNewList] = useState([]);
+
   const selected = (title) => {
-    Alert.alert(
-      "Delete Item",
-      "Are you sure you want to delete this item?",
-      [
-          {
-              text: "Cancel",
-              style: "cancel"
-          },
-          {
-              text: "Yes", onPress: () => {
-                  const { list } = route.params;
-                  //console.log(title) This works
-                list.forEach(food =>{
-                  //console.log(food.data) this also works
-                    if(food.data !== title){
-                     setNewList(prev => {
-                      return [ 
-                        ...prev,
-                        food.data
-                      ]
-                    });
-                    }else{
-
-                    }
-                }) //ForEach loop end
-                console.log(newlist);
-              }
-          }
-      ])
+    Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: () => {deleteItem(title)},
+      },
+    ]);
   };
-  
-
+  const deleteItem = (title) => {
+    console.log("are you here?");
+    var array = [...newlist]; // make a separate copy of the array
+    let newArray = [];
+    console.log(array);
+      for(let i =0; i<array.length; i++){
+        if(array[i].data !== title){
+          newArray.push(array[i]);
+        }
+      }
+      console.log(newArray);
+      setNewList(newArray);
+  };
   const Item = ({ title }) => (
     <View style={styles.item}>
-      <TouchableOpacity onPress={() => {
-        selected(title)
-        }}>
-      <Text style={styles.title}>{title}</Text>
+      <TouchableOpacity
+        onPress={() => {
+          selected(title);
+        }}
+      >
+        <Text style={styles.title}>{title}</Text>
       </TouchableOpacity>
     </View>
   );
-
-  if (!!route.params && !!route.params.list) {
-    const { list } = route.params;
-    return (
-      <SafeAreaView style={styles.container}>
-        <FlatList data={list} renderItem={({ item }) => <Item title = {item.data} />} />
-      </SafeAreaView>
-    );
+  const addItem = (arr) => {
+    setRouteParams(route.params);
+    setAdded(false);
+    setNewList(arr);
+  };
+  if(!!route.params && route.params !== routeparams){
+    setAdded(true);
   }
+  if (!!route.params && !!route.params.list && added) {
+    addItem(route.params.list);
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.sectionHeader}>This is the contents of your Fridge:</Text>
+      <Text style={styles.sectionHeader}>
+        This is the contents of your Fridge:
+      </Text>
+      <FlatList
+        data={newlist}
+        renderItem={({ item }) => <Item title={item.data} />}
+      />
     </SafeAreaView>
   );
 };

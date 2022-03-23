@@ -3,15 +3,11 @@ import { Text, View, StyleSheet, Button} from 'react-native';
 import { useState, useEffect } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
-export const ScannerScreen = ({ navigation }) => {
+export const ScannerScreen = ({ navigation, route }) => {
 
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [list, setList] = useState([]);
-
-      
-  //this is how we create a state for a function componenet in REACT NATIVE. 'Food' would be the name of the state. 'setFood' would be the function we're gonna use to set the first's arugment's state.
-
 
     useEffect(() => {
       (async () => {
@@ -20,13 +16,14 @@ export const ScannerScreen = ({ navigation }) => {
       })();
     }, []);
 
+
     const handleBarCodeScanned = ({ type, data }) => {
       setScanned(true);
       //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
       setList(prev => {
         return [ 
           ...prev,
-          {data,type}
+          {data}
         ]
       });
       //alert(JSON.stringify(list));
