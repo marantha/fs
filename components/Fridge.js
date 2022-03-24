@@ -10,6 +10,7 @@ import {
   Button,
   Alert,
 } from "react-native";
+//import { get } from "react-native/Libraries/Utilities/PixelRatio";
 
 const styles = StyleSheet.create({
   container: {
@@ -47,35 +48,47 @@ const styles = StyleSheet.create({
   },
 });
 
-export const FridgeScreen = ({ route, navigation }) => {
+export const getTodaysDate = () =>{
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+
+  today = mm + '/' + dd + '/' + yyyy;
+  return today;
+}
+
+
+export const FridgeScreen = ({ route }) => {
   const [newlist, setNewList] = useState([]);
   const [added, setAdded] = useState(false);
   const [routeparams, setRouteParams] = useState("");
-
-
+  
+ 
   const selected = (title) => {
-    Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
+   
+    Alert.alert(title, "Purchased on:" + getTodaysDate(),
+     [
+      {
+        text: "Remove",
+        onPress: () => {deleteItem(title)},
+      },
       {
         text: "Cancel",
         style: "cancel",
       },
-      {
-        text: "Yes",
-        onPress: () => {deleteItem(title)},
-      },
     ]);
   };
   const deleteItem = (title) => {
-    console.log("are you here?");
     var array = [...newlist]; // make a separate copy of the array
     let newArray = [];
-    console.log(array);
+    //console.log(array);
       for(let i =0; i<array.length; i++){
-        if(array[i].data !== title){
+        if(array[i].item_name !== title){
           newArray.push(array[i]);
         }
       }
-      console.log(newArray);
+      //console.log(newArray);
       setNewList(newArray);
   };
   const Item = ({ title }) => (
@@ -89,27 +102,28 @@ export const FridgeScreen = ({ route, navigation }) => {
       </TouchableOpacity>
     </View>
   );
-  const addItem = (arr) => {
-    setRouteParams(route.params);
-    setAdded(false);
-    setNewList(arr);
+  const addItem = (arr) => { //add items to the list. arr it the list [Object{data}, ...] from scannner
+    setRouteParams(route.params); //routeparams = route.params
+    setAdded(false); //prevents infinte re-rendering
+    setNewList(arr); //makes a copy of route.params.lists. There will be only one render coz of setNewList
+        //console.log(arr); //testing for the BUG!!!!!
   };
-  if(!!route.params && route.params !== routeparams){
-    setAdded(true);
-  }
-  if (!!route.params && !!route.params.list && added) {
-    addItem(route.params.list);
-  }
 
+  if(!!route.params && route.params !== routeparams){ //route.params should not be undefined and should be different than routeparams state variable
+    setAdded(true); //setAdded(true) = will reload once it reaches the end of code
+  }
+  if (!!route.params && !!route.params.list && added) { //becuz 'added' in a parameter, it would only rerender once, thanks to line 102
+    addItem(route.params.list); 
+  } 
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.sectionHeader}>
-        This is the contents of your Fridge:
+        This is the contents of your Fridge as of {getTodaysDate()}:
       </Text>
       <FlatList
         data={newlist}
-        renderItem={({ item }) => <Item title={item.data} />}
+        renderItem={({ item }) => <Item title={item.item_name} />}
       />
     </SafeAreaView>
   );
