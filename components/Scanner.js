@@ -1,47 +1,97 @@
-import * as React from 'react';
-import { Text, View, StyleSheet, Button, AsyncStorageStatic} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { EvilIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useState, useEffect } from 'react';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import barcodeScannedItems from "./BarcodeScannedItems";
-import axios from "axios";
-import { v4 as uuidv4 } from 'uuid';
+import * as React from "react";
+import { Text, View, StyleSheet, Button, Alert } from "react-native";
+import { useState, useEffect } from "react";
+import { BarCodeScanner } from "expo-barcode-scanner";
 
+//////////////// CREDENTIALS FROM EDAMAM ////////////////
+//  5fcdcfd1 Application ID
+//  534473b68cb75e0091e737bb1b3866ea     API Key
+//  https://developer.edamam.com/food-database-api-docs for documentation and demo
 
-export const ScannerScreen = () => {
+var app_key = "534473b68cb75e0091e737bb1b3866ea"; // obtained from edamame application
+var app_id = "5fcdcfd1"; // # obtained from edamame application
 
+var api_source = "https://api.edamam.com/api/food-database/v2/parser";
+
+var item_name = "";
+
+export const ScannerScreen = ({ navigation, route }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [list, setList] = useState([]);
 
-      
-  //this is how we create a state for a function componenet in REACT NATIVE. 'Food' would be the name of the state. 'setFood' would be the function we're gonna use to set the first's arugment's state.
+  useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
+  const barCodeReuqest = async (data) => {
+    return new Promise((resolve, reject) => {
+      var upc = data;
+      // found in edamame demo, specifies the upc and uses app key and id to authenticate
+      var requestAPI =
+        api_source +
+        "?app_id=" +
+        app_id +
+        "&app_key=" +
+        app_key +
+        "&upc=" +
+        upc +
+        "&nutrition-type=cooking";
+      let request = new XMLHttpRequest();
+      try {
+        request.open("GET", requestAPI);
+        request.send();
+        request.onload = () => {
+          if (request.status == 200) {
+            var item = JSON.parse(request.response);
+            resolve(item);
+            item_name = item.hints[0].food.label;
+            alert("The item name is: " + item_name);
+          } else {
+            resolve("fefe");
+          }
+        }; // end of reload
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
 
-    useEffect(() => {
-      (async () => {
-        const { status } = await BarCodeScanner.requestPermissionsAsync();
-        setHasPermission(status === 'granted');
-      })();
-    }, []);
-
-    const handleBarCodeScanned = ({ type, data }) => {
-      setScanned(true);
-      alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-      setList(prev => {
-        return [ 
-          ...prev,
-          {data}
+  const wrapSetList = async (item_name) => {
+    return new Promise((resolve, reject) => {
+      resolve(
+        setList((prev) => {
+          return [...prev, { item_name }];
+        })
+      );
+    });
+  };
+  const handleBarCodeScanned = async ({ type, data }) => {
+    setScanned(true);
+    let request = await barCodeReuqest(data);
+    if (request !== "fefe") {
+      item_name = request.hints[0].food.label;
+    } else {
+      Alert.alert(
+        "warning",
+        "This item is not available in the API, would you like to add it manually",
+        [
+          {
+            text: "yes",
+          },
+          {
+            text: "no",
+          },
         ]
-      });
-      //alert(data);
-      alert(JSON.stringify(list));
-      };
-  
+      );
+    }
+    await wrapSetList(item_name);
+    navigation.navigate("Fridge", { list: list });
+  }; //end of handlebarcodescanned
+
   if (hasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
   }
@@ -51,19 +101,20 @@ export const ScannerScreen = () => {
   return (
     <View style={styles.container}>
       <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned }
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
-        
       />
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false) } />}
+      {scanned && (
+        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
+      )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
   },
 });
